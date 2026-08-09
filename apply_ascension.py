@@ -253,3 +253,175 @@ if "private void launchAscensionGame()" not in main:
 
 main_path.write_text(main, encoding="utf-8")
 print("[Ascension] Patches aplicados com sucesso em:", ROOT)
+
+# 7. Ascension direct nickname mode (no account chooser UI)
+# Keep Amethyst's internal local-profile mechanism, but present it as a simple Nick flow.
+
+# Hide the account spinner/header from the launcher. The view stays instantiated internally so
+# existing account-selection/game-launch code continues working, but users never see "Adicionar conta".
+activity_layout_path = required("app_pojavlauncher/src/main/res/layout/activity_pojav_launcher.xml")
+activity_layout = activity_layout_path.read_text(encoding="utf-8")
+activity_layout = replace_required(
+    activity_layout,
+    '''        android:id="@+id/account_spinner"
+        android:layout_width="match_parent"''',
+    '''        android:id="@+id/account_spinner"
+        android:visibility="gone"
+        android:layout_width="match_parent"''',
+    "ocultar seletor de contas"
+)
+activity_layout_path.write_text(activity_layout, encoding="utf-8")
+
+# Allow Amethyst's local nickname profile without requiring a previously-added Microsoft profile.
+local_login_path = required(
+    "app_pojavlauncher/src/main/java/net/kdt/pojavlaunch/fragments/LocalLoginFragment.java"
+)
+local_login = local_login_path.read_text(encoding="utf-8")
+local_login = local_login.replace(
+    "import static net.kdt.pojavlaunch.Tools.hasOnlineProfile;\n\n",
+    ""
+)
+local_login = replace_required(
+    local_login,
+    '''        // This is overkill but meh
+        if (!hasOnlineProfile()){
+            Tools.swapFragment(requireActivity(), MainMenuFragment.class, MainMenuFragment.TAG, null);
+        }
+''',
+    "",
+    "liberar Nick local sem conta Microsoft"
+)
+local_login_path.write_text(local_login, encoding="utf-8")
+
+# Replace the generic local-account page with a branded, Nick-only screen.
+local_login_layout_path = required("app_pojavlauncher/src/main/res/layout/fragment_local_login.xml")
+local_login_layout_path.write_text(r'''<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#07090B"
+    android:padding="22dp">
+
+    <LinearLayout
+        android:id="@+id/login_menu"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        android:padding="24dp"
+        android:background="@drawable/ascension_panel"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <ImageView
+            android:layout_width="72dp"
+            android:layout_height="72dp"
+            android:src="@drawable/ascension_icon_foreground"
+            android:contentDescription="Ascension Pixelmon" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:text="ESCOLHA SEU NICK"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"
+            android:textSize="22sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:gravity="center"
+            android:text="Seu Nick é sua identidade no servidor. Use sempre o mesmo Nick para manter seu progresso."
+            android:textColor="#9BA6AE"
+            android:textSize="13sp" />
+
+        <com.kdt.mcgui.MineEditText
+            android:id="@+id/login_edit_email"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:layout_marginTop="22dp"
+            android:hint="Digite seu Nick"
+            android:imeOptions="actionDone|flagNoExtractUi"
+            android:inputType="text"
+            android:maxLength="16"
+            android:singleLine="true"
+            android:textSize="16sp" />
+
+        <com.kdt.mcgui.MineButton
+            android:id="@+id/login_button"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:layout_marginTop="14dp"
+            android:text="CONTINUAR"
+            android:textColor="@android:color/white" />
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+''', encoding="utf-8")
+
+# Route every "choose authentication" request straight to the Nick screen instead of the
+# Microsoft Account / Local Account selector. Also open the Nick screen automatically once,
+# on a clean installation where no nickname profile has been saved yet.
+launcher_activity_path = required(
+    "app_pojavlauncher/src/main/java/net/kdt/pojavlaunch/LauncherActivity.java"
+)
+launcher_activity = launcher_activity_path.read_text(encoding="utf-8")
+
+local_import = "import net.kdt.pojavlaunch.fragments.LocalLoginFragment;\n"
+if local_import not in launcher_activity:
+    import_anchor = "import net.kdt.pojavlaunch.fragments.MainMenuFragment;\n"
+    if import_anchor not in launcher_activity:
+        raise SystemExit("[Ascension] Nao foi possivel inserir import do Nick local.")
+    launcher_activity = launcher_activity.replace(import_anchor, import_anchor + local_import, 1)
+
+launcher_activity = replace_required(
+    launcher_activity,
+    "        Tools.swapFragment(this, SelectAuthFragment.class, SelectAuthFragment.TAG, null);",
+    "        Tools.swapFragment(this, LocalLoginFragment.class, LocalLoginFragment.TAG, null);",
+    "pular tela Microsoft/Local Account"
+)
+
+launcher_activity = replace_required(
+    launcher_activity,
+    '''        if(mAccountSpinner.getSelectedAccount() == null){
+            Toast.makeText(this, R.string.no_saved_accounts, Toast.LENGTH_LONG).show();
+            ExtraCore.setValue(ExtraConstants.SELECT_AUTH_METHOD, true);
+            return false;
+        }
+''',
+    '''        if(mAccountSpinner.getSelectedAccount() == null){
+            Tools.swapFragment(this, LocalLoginFragment.class, LocalLoginFragment.TAG, null);
+            return false;
+        }
+''',
+    "remover aviso de contas salvas ao jogar"
+)
+
+launcher_activity = replace_required(
+    launcher_activity,
+    '''        bindViews();
+        checkNotificationPermission();''',
+    '''        bindViews();
+
+        // Ascension: first launch asks only for the player's Nick. Once saved, this is skipped.
+        mFragmentView.post(() -> {
+            if (mAccountSpinner.getSelectedAccount() == null) {
+                Tools.swapFragment(this, LocalLoginFragment.class, LocalLoginFragment.TAG, null);
+            }
+        });
+
+        checkNotificationPermission();''',
+    "abrir tela de Nick apenas na primeira instalacao"
+)
+
+launcher_activity_path.write_text(launcher_activity, encoding="utf-8")
+
+print("[Ascension] Modo Nick direto aplicado: seletor de contas removido da interface.")
+
