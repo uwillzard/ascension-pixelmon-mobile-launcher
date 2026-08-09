@@ -1,0 +1,11 @@
+ASCENSION PIXELMON MOBILE — LICENSE NOTICE
+
+This customization package does not redistribute the complete Amethyst-Android source tree.
+The supplied build scripts fetch AngelAuraMC/Amethyst-Android and apply Ascension-specific changes.
+
+Amethyst-Android declares GNU LGPLv3 licensing.
+When distributing a modified binary, preserve the upstream license notices and comply with
+the LGPLv3 and the licenses of bundled dependencies.
+
+Upstream project:
+AngelAuraMC/Amethyst-Android

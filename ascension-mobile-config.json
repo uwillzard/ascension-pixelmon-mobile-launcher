@@ -1,0 +1,17 @@
+{
+  "app_name": "Ascension Pixelmon Launcher",
+  "android_package": "br.com.ascensionpixelmon.launcher",
+  "minecraft_version": "1.21.1",
+  "pixelmon_version": "9.3.16",
+  "neoforge_version": "21.1.200",
+  "java_version": 21,
+  "server_address": "Jogar.AscensionPixelmon.com.br",
+  "site_url": "https://AscensionPixelmon.com.br",
+  "discord_url": "https://discord.gg/HuF2JHbSZr",
+  "github_release_api": "https://api.github.com/repos/uwillzard/ascension-pixelmon-modpack/releases/tags/v1.0.0",
+  "preferred_mobile_asset": "mods-mobile.zip",
+  "fallback_asset": "mods.zip",
+  "fallback_mods_url": "https://github.com/uwillzard/ascension-pixelmon-modpack/releases/download/v1.0.0/mods.zip",
+  "config_url": "https://github.com/uwillzard/ascension-pixelmon-modpack/releases/download/v1.0.0/config.zip",
+  "options_url": "https://github.com/uwillzard/ascension-pixelmon-modpack/releases/download/v1.0.0/options.txt"
+}

@@ -1,0 +1,22 @@
+ASCENSION PIXELMON MOBILE LAUNCHER — V1
+
+VALIDAÇÕES REALIZADAS
+- apply_ascension.py: sintaxe Python validada
+- patcher: executado com sucesso contra mock baseado no MainMenuFragment/build.gradle atuais
+- XMLs customizados: parseados com sucesso
+- updater Java: checagens estruturais e balanceamento de chaves concluídos
+- Workflow YAML parseado com sucesso.
+
+IMPORTANTE
+Este ambiente não possui Android SDK/Gradle Android completo, portanto o APK não foi compilado
+localmente aqui. O projeto inclui GitHub Actions e BUILD-WINDOWS.ps1 para gerar o APK usando
+a base Amethyst-Android v3_openjdk.
+
+V1
+- Rebrand Ascension
+- Atualizador seguro de mods antes do JOGAR
+- mods-mobile.zip preferencial com fallback para mods.zip
+- config.zip/options.txt apenas na primeira instalação
+- rollback de mods em falha
+- Site/Discord/servidor configurados
+- Perfil NeoForge inicial ainda é criado/selecionado pelo mecanismo do Amethyst
