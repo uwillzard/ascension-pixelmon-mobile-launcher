@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+  <meta name="color-scheme" content="dark">
+  <title>Ascension Pixelmon Mobile</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="shell">
+    <aside class="rail">
+      <button class="brand" data-action="site" aria-label="Site Ascension"><img src="assets/ascension-round-logo.png" alt="Ascension"></button>
+      <nav>
+        <button class="rail-button active" data-tab="home"><b>⌂</b><span>Início</span></button>
+        <button class="rail-button" data-tab="setup"><b>◆</b><span>Instalação</span></button>
+        <button class="rail-button" data-tab="settings"><b>⚙</b><span>Ajustes</span></button>
+      </nav>
+      <small>Mobile 1.0</small>
+    </aside>
+
+    <main>
+      <header>
+        <div class="heading"><span>LAUNCHER MOBILE OFICIAL</span><h1>Ascension Pixelmon</h1></div>
+        <div class="header-actions">
+          <button class="chip site" data-action="site"><img src="assets/site-ascension-icon.png"><span><small>SITE OFICIAL</small><strong>AscensionPixelmon.com.br</strong></span></button>
+          <button class="chip discord" data-action="discord"><img src="assets/discord-icon.png"><span><small>DISCORD</small><strong>Comunidade oficial</strong></span></button>
+          <button class="nick-chip" id="nickChip"><img src="assets/steve-head.png"><span><small>SEU PERFIL</small><strong id="nickDisplay">Escolher Nick</strong></span><b>›</b></button>
+        </div>
+      </header>
+
+      <section class="page active" id="page-home">
+        <div class="top-grid">
+          <article class="hero">
+            <img class="hero-img" src="assets/ascension-pixelmon-banner.png" alt="Ascension Pixelmon">
+            <div class="shade"></div>
+            <div class="hero-copy">
+              <span class="badge">ANDROID • JAVA EDITION</span>
+              <h2>Ascension<br><em>Pixelmon</em></h2>
+              <p>Minecraft 1.21.1 • NeoForge 21.1.200 • Pixelmon</p>
+              <div class="tags"><span>Modpack automático</span><span>Perfil por Nick</span><span>Servidor oficial</span></div>
+            </div>
+          </article>
+
+          <aside class="status-card">
+            <div class="status-head"><div><small>STATUS DO SERVIDOR</small><h3 id="serverStatus">Verificando...</h3></div><span id="statusDot" class="status-dot"></span></div>
+            <div class="server-orb"><i></i></div>
+            <dl>
+              <div><dt>Endereço</dt><dd>Jogar.AscensionPixelmon.com.br</dd></div>
+              <div><dt>Minecraft</dt><dd>1.21.1</dd></div>
+              <div><dt>Mod loader</dt><dd>NeoForge 21.1.200</dd></div>
+              <div><dt>Motor Android</dt><dd id="engineState">Pojav integrado</dd></div>
+            </dl>
+          </aside>
+        </div>
+
+        <div class="notice-row">
+          <article><b>01</b><span><small>SEU NICK</small><strong>Sua identidade no servidor</strong><p>Use sempre o mesmo Nick para manter Pokémon, itens e progresso.</p></span></article>
+          <article><b>02</b><span><small>ATUALIZAÇÕES</small><strong>Mods sem acumular versões antigas</strong><p>O launcher valida o SHA-256 e só troca a pasta após um download válido.</p></span></article>
+          <article><b>03</b><span><small>MOBILE</small><strong>Preparado para NeoForge</strong><p>O próprio launcher instala Minecraft 1.21.1, Java 21 e NeoForge 21.1.200 quando necessário.</p></span></article>
+        </div>
+      </section>
+
+      <section class="page" id="page-setup">
+        <div class="page-title"><div><small>INSTALAÇÃO MOBILE</small><h2>Ascension Pixelmon no Android</h2><p>Minecraft Java, Java 21, NeoForge e o modpack são preparados pelo próprio Ascension Launcher.</p></div><span class="official">PERFIL OFICIAL</span></div>
+        <div class="setup-grid">
+          <article class="profile-card"><img src="assets/app-icon.png"><div><small>PERFIL</small><h3>Ascension Pixelmon</h3><p>Minecraft 1.21.1 · NeoForge 21.1.200</p></div><b>✓</b></article>
+          <article class="setup-card"><small>MODS</small><h3>Atualização segura</h3><p>Compara o digest do GitHub. Se houver atualização, baixa em pasta temporária, valida e só depois substitui os mods.</p></article>
+          <article class="setup-card"><small>CONFIGURAÇÕES</small><h3>Instalação inicial</h3><p><code>config.zip</code> e <code>options.txt</code> são instalados apenas na primeira preparação e depois preservados.</p></article>
+          <article class="setup-card"><small>MOTOR INTEGRADO</small><h3 id="engineSetupTitle">Pojav/Amethyst integrado</h3><p id="engineSetupText">O motor Minecraft Java faz parte do próprio Ascension Launcher. Não é necessário instalar outro launcher.</p></article>
+        </div>
+      </section>
+
+      <section class="page" id="page-settings">
+        <div class="page-title"><div><small>AJUSTES</small><h2>Manutenção do launcher</h2><p>Ferramentas de reparo sem apagar seu perfil.</p></div></div>
+        <div class="settings-grid">
+          <article class="setup-card"><small>REPARAÇÃO</small><h3>Forçar download dos mods</h3><p>Na próxima preparação, o launcher ignora o hash salvo e baixa <code>mods.zip</code> novamente. A pasta atual só é removida depois que a nova passar na validação.</p><button class="secondary" id="repairButton">Preparar reparo</button></article>
+          <article class="setup-card"><small>ARQUIVOS DO CLIENTE</small><h3>Config e options preservados</h3><p>Esses arquivos não são reinstalados a cada toque em Jogar, evitando sobrescrever suas preferências.</p></article>
+          <article class="setup-card"><small>SERVIDOR</small><h3>Jogar.AscensionPixelmon.com.br</h3><p>O servidor é incluído no pacote mobile gerado pelo launcher.</p><button class="secondary" id="checkServerButton">Verificar servidor</button></article>
+        </div>
+      </section>
+
+      <section class="dock">
+        <div class="dock-profile"><img src="assets/app-icon.png"><span><small>PERFIL ATIVO</small><strong>Ascension Pixelmon 1.21.1</strong><em id="dockHint">Escolha seu Nick para começar.</em></span></div>
+        <div class="progress" id="progressWrap" hidden><div><span id="progressLabel">Preparando...</span><b id="progressPercent">0%</b></div><div class="bar"><i id="progressBar"></i></div></div>
+        <button class="prepare" id="prepareButton"><span>↻</span><div><strong>PREPARAR</strong><small>Instalar / atualizar modpack</small></div></button>
+        <button class="play" id="playButton"><span>▶</span><div><strong>JOGAR</strong><small id="playSubtitle">Escolha seu Nick</small></div></button>
+      </section>
+      <footer><span id="footerText">Motor Pojav integrado. Pronto para configurar o Ascension.</span><span>Ascension Pixelmon • Android</span></footer>
+    </main>
+  </div>
+
+  <div class="modal" id="nickModal" hidden>
+    <div class="modal-card">
+      <div class="modal-art"><img src="assets/auth-profile-art.png"><div></div></div>
+      <div class="modal-content">
+        <button class="close" id="closeNick">×</button>
+        <small>SEU PERFIL</small><h2>Qual será o seu Nick?</h2>
+        <div class="warning"><b>!</b><span><strong>SEU NICK É A SUA IDENTIDADE NO SERVIDOR</strong><p>Escolha com cuidado e use sempre o mesmo Nick ao entrar no servidor. É ele que mantém viva a sua jornada, guardando cada Pokémon, item, conquista e todo o seu progresso construído no servidor Ascension Pixelmon.</p></span></div>
+        <label>Seu Nick no Minecraft</label>
+        <div class="nick-input"><span>@</span><input id="nickInput" maxlength="16" minlength="3" placeholder="Ex.: Sessent4" autocapitalize="off" autocomplete="off"></div>
+        <p class="rule">Use de 3 a 16 caracteres: letras, números ou underline (_).</p>
+        <button class="save" id="saveNick">CONTINUAR COM ESTE NICK</button>
+        <p class="modal-message" id="nickMessage" hidden></p>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" hidden></div>
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,91 +1,117 @@
-# Ascension Pixelmon Mobile Launcher — Android V1
+# Ascension Pixelmon Mobile — Pojav/Amethyst Edition
 
-Esta pasta é um projeto de customização/build do **Amethyst-Android** para o servidor
-**Ascension Pixelmon**. Ela não redistribui o código-fonte completo do Amethyst:
-o build baixa a base oficial e aplica os patches Ascension.
+This package turns a pinned Amethyst/Pojav Android source tree into the **Ascension Pixelmon Launcher**.
 
-## Alvo
+## What is already implemented
 
-- Minecraft Java: 1.21.1
-- Pixelmon: 9.3.16
-- NeoForge: 21.1.200
-- Java: 21
-- Servidor: Jogar.AscensionPixelmon.com.br
+- Ascension branded WebView launcher UI.
+- Local Nick profile (`3–16` letters/numbers/underscore), with deterministic offline UUID.
+- Fixed Minecraft **1.21.1**.
+- Patched Amethyst downloader so the Ascension flow can install/verify Minecraft 1.21.1 while a **local Nick** is selected. The normal upstream `start()` behavior remains unchanged outside the Ascension flow.
+- Java runtime installation remains handled by Amethyst's Minecraft downloader/runtime logic.
+- Fixed NeoForge **21.1.200**, downloaded from NeoForge's Maven using Amethyst's native `NeoForgeDownloadTask`.
+- NeoForge installer runs in Amethyst's separate `:gui_installer` process and returns to the launcher when complete.
+- Dedicated launcher profile: `Ascension Pixelmon`.
+- Dedicated game directory: `ascension-pixelmon`.
+- Automatic `mods.zip` update using GitHub release asset SHA-256 when available.
+- Atomic mods replacement: `mods.stage` → validate → preserve old `mods` → commit → delete backup. On failure, the previous mods folder is restored.
+- `config.zip` and `options.txt` are installed only during initial client setup and preserved on later launches.
+- Bundled `Ascension-CleanMenu-1.0.0.jar` is restored to the mods folder if missing.
+- `servers.dat` is created with `Jogar.AscensionPixelmon.com.br` if one is not already present.
+- `JOGAR` flow: Minecraft → NeoForge → modpack → game.
+- App ID changed to `br.com.ascensionpixelmon.launcher` (`.debug` for debug build).
+- Ascension launcher icon and name.
 
-## O que a V1 já implementa
+## Tested base
 
-- Nome Android: **Ascension Pixelmon Launcher**
-- Package: `br.com.ascensionpixelmon.launcher`
-- Tela inicial escura Ascension
-- Botão **JOGAR**
-- Botões para Site, Discord, Controles Touch e Arquivos do Jogo
-- Atualizador Ascension executado **antes** de abrir o Minecraft
-- Procura primeiro `mods-mobile.zip` na release `v1.0.0`
-- Enquanto `mods-mobile.zip` não existir, usa o `mods.zip` atual como fallback
-- Compara fingerprint/digest remoto com o instalado
-- Baixa atualizações para pasta temporária
-- Valida o ZIP e, quando disponível, o SHA-256 publicado pelo GitHub
-- Mantém a pasta `mods` antiga até a nova estar pronta
-- Faz rollback se a instalação nova falhar
-- Remove backup e temporários após sucesso
-- Instala `config.zip` e `options.txt` apenas na primeira instalação do perfil
+The patcher is pinned to:
 
-## Limite desta V1
-
-O launcher já cuida da identidade Ascension e do modpack, mas a **primeira criação/seleção
-do perfil NeoForge 1.21.1** ainda usa o mecanismo normal do Amethyst. Depois que o perfil
-NeoForge estiver criado e selecionado, o botão **JOGAR** passa pelo atualizador Ascension
-automaticamente antes de iniciar o jogo.
-
-## Gerar APK pelo GitHub Actions
-
-1. Crie um repositório vazio no GitHub.
-2. Extraia este ZIP e envie **todo o conteúdo desta pasta** para o repositório.
-3. Entre em **Actions**.
-4. Abra **Build Ascension Android APK**.
-5. Clique em **Run workflow**.
-6. Ao concluir, baixe o artifact **Ascension-Pixelmon-Mobile-APK**.
-
-O APK gerado é uma build Debug instalável para testes.
-
-## Gerar APK no Windows
-
-Pré-requisitos:
-- Git
-- Java 21
-- Android Studio / Android SDK instalado
-
-Abra PowerShell nesta pasta e execute:
-
-```powershell
-.\BUILD-WINDOWS.ps1
+```text
+AngelAuraMC/Amethyst-Android
+4cf805a93124269b47f8a4ba27fcce36b79ab5ef
 ```
 
-Se o build terminar, o APK será copiado para:
+It intentionally refuses to patch another commit unless `--allow-unpinned` is supplied. This prevents silent source drift from breaking the launcher.
 
-`dist\Ascension-Pixelmon-Mobile-v1-debug.apk`
+## Easiest way to get the APK: GitHub Actions
 
-## Mods para celular
+1. Create a new GitHub repository and upload **the contents of this ZIP**.
+2. Open the repository's **Actions** tab.
+3. Run **Build Ascension Pixelmon APK**.
+4. When the workflow finishes, download the artifact named:
 
-A V1 funciona sem mudar sua release porque cai para `mods.zip`.
+```text
+Ascension-Pixelmon-Mobile-Debug
+```
 
-Para a versão mobile ficar mais estável, publique depois na mesma release:
+Inside it:
 
-`mods-mobile.zip`
+```text
+Ascension-Pixelmon-Mobile-Debug.apk
+Ascension-Pixelmon-Mobile-Debug.sha256
+```
 
-Esse pacote deve remover mods puramente gráficos/de desktop que não funcionem bem
-no Android. O servidor continua sendo o mesmo.
+That debug APK is appropriate for the first BlueStacks/Android tests.
 
-## Arquivos principais
+## Local build
 
-- `apply_ascension.py`: aplica a identidade Ascension e injeta o atualizador
-- `branding/AscensionModpackUpdater.java`: atualização segura do modpack
-- `branding/fragment_launcher.xml`: tela principal mobile
-- `.github/workflows/build-apk.yml`: build automático do APK
-- `BUILD-WINDOWS.ps1`: build local no Windows
-- `ascension-mobile-config.json`: referências/versões do projeto
+Prerequisites include Git, Python 3, Android SDK/NDK compatible with upstream Amethyst, JDK 21, Gradle 9.6.1, and the upstream JRE asset expected by Amethyst.
 
-## Licença
+Linux/macOS:
 
-O projeto de base Amethyst-Android declara GNU LGPLv3. Ao distribuir uma build modificada,
-mantenha os avisos e obrigações de licença da base e das dependências.
+```bash
+./build-local.sh
+```
+
+Windows PowerShell:
+
+```powershell
+./build-local.ps1
+```
+
+The GitHub Actions route is recommended because it reproduces Amethyst's own build setup and downloads the required upstream JRE artifact automatically.
+
+## Important files
+
+- `tools/apply_ascension.py` — deterministic patcher.
+- `overlay/.../fragments/MainMenuFragment.java` — Ascension launcher UI/bridge and launch orchestration.
+- `overlay/.../ascension/AscensionBootstrap.java` — Minecraft + NeoForge bootstrap state machine.
+- `overlay/.../ascension/AscensionUpdater.java` — safe modpack updater.
+- `overlay/.../assets/ui/` — Ascension UI and images.
+- `.github/workflows/build-ascension-apk.yml` — automatic debug APK build.
+
+## Modpack URLs
+
+The integration currently uses:
+
+```text
+https://github.com/uwillzard/ascension-pixelmon-modpack/releases/latest/download/mods.zip
+https://github.com/uwillzard/ascension-pixelmon-modpack/releases/latest/download/config.zip
+https://github.com/uwillzard/ascension-pixelmon-modpack/releases/latest/download/options.txt
+```
+
+and checks the latest release API for the `mods.zip` asset digest.
+
+## First-run behavior
+
+On the first JOGAR:
+
+1. Save/create the local Nick profile.
+2. Download/verify Minecraft 1.21.1.
+3. Let Amethyst install the required Java runtime.
+4. Download NeoForge 21.1.200 installer if missing.
+5. Run the NeoForge client installer.
+6. Create/select the fixed Ascension launcher profile.
+7. Download and atomically install `mods.zip`.
+8. Install initial `config.zip` + `options.txt` once.
+9. Start the NeoForge Minecraft version.
+
+Later JOGAR operations skip already-installed game/bootstrap components and only replace the mods folder when the remote digest changes (or a repair was requested).
+
+## Current validation level
+
+The overlay, XML, workflow, patcher and source invariants are validated in this package. The actual Android APK compilation must run against the full pinned Amethyst source tree; that full upstream repository is intentionally not bundled here because it is very large.
+
+
+## v0.3
+- Corrige crash de WebView nula usando um layout exclusivo `fragment_ascension_launcher`.
