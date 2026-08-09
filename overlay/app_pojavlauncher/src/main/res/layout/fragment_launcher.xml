@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.webkit.WebView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/ascension_webview"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/main_menu_root"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="#090A0E" />
+    android:layout_height="match_parent">
+
+    <WebView
+        android:id="@+id/ascension_webview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#090b12" />
+
+</FrameLayout>
